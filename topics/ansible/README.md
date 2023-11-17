@@ -229,7 +229,6 @@ Other general coding best practices like version control, good variable names, t
 
 <details>
 <summary>Explain the directory layout of an Ansible role</summary><br><b>
-</b></details>
     defaults: This directory contains default variable values for the role. 
     files: You can place static files that need to be copied to the target servers in this directory. 
 
@@ -244,7 +243,9 @@ Other general coding best practices like version control, good variable names, t
     tests: This directory is used for testing the role.
     vars: This directory can contain additional variable files that are specific to the role. The vars/main.yml file is the primary place for defining variables specific to the role.
 
-    README.md: A README file that provides documentation and usage instructions for the role.
+    README.md: A README file that provides documentation and usage instructions for the role.	
+</b></details>
+
 <details>
 <summary>What 'blocks' are used for in Ansible?</summary><br>
 <b>
@@ -254,12 +255,12 @@ Other general coding best practices like version control, good variable names, t
 <details>
 <summary>How do you handle errors in Ansible?</summary><br><b>
 Add a section called `rescue`. rescue block will run when you have error in the above `block:` section.
-Troubleshoot with below options on the ansible command:
--vvvv enables connection debugging.
---step causes Ansible to stop on each task and ask if it should execute that task.
---check enables check mode, where Ansible runs without making any changes on remote systems.
---diff enables diff mode, where Ansible provides before-and-after comparisons.
---start-at-task starts executing your playbook at a particular task
+Troubleshoot with below options on the ansible command:<b>
+-vvvv enables connection debugging.<b>
+--step causes Ansible to stop on each task and ask if it should execute that task.<b>
+--check enables check mode, where Ansible runs without making any changes on remote systems.<b>
+--diff enables diff mode, where Ansible provides before-and-after comparisons.<b>
+--start-at-task starts executing your playbook at a particular task<b>
 </b></details>
 
 <details>
