@@ -58,7 +58,7 @@ Ansible rather follows the mutable infrastructure paradigm where it allows you t
 <details>
 <summary>True or False? Ansible uses declarative style to describe the expected end state</summary><br><b>
 
-False. It uses a procedural style.
+Ansible uses a hybrid approach. Ansible scripts are procedural in nature, as they execute from top to bottom in the order they appear in the playbook. At the same time, users write declarative code in playbooks, specifying the desired state of the system, and Ansible automatically performs the requested changes. This duality allows some Ansible modules to work declaratively, while others adopt a more procedural programming approach.  
 </b></details>
 
 <details>
@@ -118,6 +118,7 @@ spun up and shut down, without you tracking every change in these sources.
     state: present
 ```
 </summary><br><b>
+
 
 ```
 - name: Install a package
@@ -187,15 +188,23 @@ when the environment variable 'BEST_YEAR' is empty or false.
 
 <details>
 <summary>You want to run Ansible playbook only on specific minor version of your OS, how would you achieve that?</summary><br><b>
+
+gather_facts: yes setting in your playbook. This allows Ansible to retrieve information about the target system, including its version.
+use conditional tasks based on the gathered facts. Specifically, you can use the ansible_distribution_version variable 
 </b></details>
 
 <details>
 <summary>What the "become" directive used for in Ansible?</summary><br><b>
-</b></details>
+</b>
+By default, Ansible connects to target hosts using SSH and the user specified in the inventory or playbook (ansible_user). 
+Using `become` ansible will sudo into a superuser for running the playbook. 
+</details>
 
 <details>
 <summary>What are facts? How to see all the facts of a certain host?</summary><br><b>
-</b></details>
+</b> 
+You can use the adhoc command to run: Eg:  `ansible webservers -m gather_facts`
+</details>
 
 <details>
 <summary>What would be the result of running the following task? How to fix it?
@@ -213,23 +222,90 @@ when the environment variable 'BEST_YEAR' is empty or false.
 
 <details>
 <summary>Which Ansible best practices are you familiar with?. Name at least three</summary><br><b>
-</b></details>
+</b> 
+Use roles to organize and modularise code 
+Use well-structured inventory files, and dynamic inventory plugins for cloud providers. 
+Keep staging and production inventory separate 
+Minimize use of `become` and use `become_user` with specifically scoped users for escalated permissions
+Other general coding best practices like version control, good variable names, testing, documentation
+</details>
 
 <details>
 <summary>Explain the directory layout of an Ansible role</summary><br><b>
-</b></details>
+</b> 
+    defaults: This directory contains default variable values for the role. These variables are used if no other values are specified when the role is used. The defaults/main.yml file is where you define these default values.
+
+    files: You can place static files that need to be copied to the target servers in this directory. These files will be available for copying using the copy module.
+
+    handlers: Handlers are special tasks that can be notified by other tasks when changes occur. Handlers are defined in the handlers/main.yml file. They are typically used to restart services or trigger other actions when configuration changes.
+
+    meta: This directory contains metadata about the role. The meta/main.yml file can include dependencies on other roles, specifying role-specific variables, and other metadata.
+
+    tasks: The main tasks for the role are defined in the tasks/main.yml file. These tasks are executed when the role is applied to the target servers.
+
+    templates: If your role uses Jinja2 templates to generate configuration files, you can place them in this directory. These templates can be copied and customized during playbook execution.
+
+    tests: This directory is used for testing the role. It can contain an inventory file and a test playbook (test.yml) to validate the role's functionality.
+
+    vars: This directory can contain additional variable files that are specific to the role. The vars/main.yml file is the primary place for defining variables specific to the role.
+
+    README.md: A README file that provides documentation and usage instructions for the role. It's a good practice to include details about how to use the role, required variables, and any other relevant information.
+</details>
 
 <details>
 <summary>What 'blocks' are used for in Ansible?</summary><br><b>
-</b></details>
+</b> 
+"blocks" are a way to logically group tasks within a playbook. Also allows to use conditions (when) and error-handling (resuce) scoped for a block of tasks.
+</details>
 
 <details>
 <summary>How do you handle errors in Ansible?</summary><br><b>
-</b></details>
+</b> 
+Add a section called `rescue`. rescue block will run when you have error in the above `block:` section.
+<br>
+
+Troubleshoot with below options on the ansible command:
+-vvvv enables connection debugging.
+--step causes Ansible to stop on each task and ask if it should execute that task.
+--check enables check mode, where Ansible runs without making any changes on remote systems.
+--diff enables diff mode, where Ansible provides before-and-after comparisons.
+--start-at-task starts executing your playbook at a particular task
+</details>
 
 <details>
 <summary>You would like to run a certain command if a task fails. How would you achieve that?</summary><br><b>
-</b></details>
+</b> 
+In below example task 3 will fail, and then it will go into the rescue section. here you can run a command in case of failure of task3.
+```
+- hosts: localhost
+  tasks:
+    - name: This task always runs
+      debug:
+        msg: "This task always runs, even if there are errors"
+    
+    - name: This is a block
+      block:   # Start of the block
+        - name: Task 1 in the block
+          debug:
+            msg: "Task 1 succeeded"
+        
+        - name: Task 2 in the block (will fail)
+          command: /nonexistent-command
+          ignore_errors: yes   # Ignore the failure of this task
+        
+        - name: Task 3 in the block
+          debug:
+            msg: "Task 3 succeeded"
+      rescue:  # This is the rescue section
+        - name: Handle errors in the block
+          debug:
+            msg: "An error occurred in the block, but we're handling it"
+      always:  # This is the always section
+        - name: This task always runs after the block
+          debug:
+            msg: "This task runs regardless of success or failure"
+```
+</details>
 
 <details>
 <summary>Write a playbook to install ‘zlib’ and ‘vim’ on all hosts if the file ‘/tmp/mario’ exists on the system.</summary><br><b>
