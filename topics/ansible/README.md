@@ -255,12 +255,12 @@ Other general coding best practices like version control, good variable names, t
 <details>
 <summary>How do you handle errors in Ansible?</summary><br><b>
 Add a section called `rescue`. rescue block will run when you have error in the above `block:` section.
-Troubleshoot with below options on the ansible command:<b>
--vvvv enables connection debugging.<b>
---step causes Ansible to stop on each task and ask if it should execute that task.<b>
---check enables check mode, where Ansible runs without making any changes on remote systems.<b>
---diff enables diff mode, where Ansible provides before-and-after comparisons.<b>
---start-at-task starts executing your playbook at a particular task<b>
+Troubleshoot with below options on the ansible command:<br>
+-vvvv enables connection debugging. <br>
+--step causes Ansible to stop on each task and ask if it should execute that task.<br>
+--check enables check mode, where Ansible runs without making any changes on remote systems.<br>
+--diff enables diff mode, where Ansible provides before-and-after comparisons.<br>
+--start-at-task starts executing your playbook at a particular task<br>
 </b></details>
 
 <details>
